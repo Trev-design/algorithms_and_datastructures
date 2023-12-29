@@ -23,6 +23,9 @@ public:
 
 	void Push(const Type& item);
 	Type Pop();
+
+	void Insert(const Type& item, size_t index);
+	Type Remove(size_t index);
 private:
 	Type GetItem(size_t index) const;
 	void Resize(size_t newCapacity);
@@ -43,6 +46,7 @@ inline const Type Array<Type>::operator[](size_t index) const
 template<typename Type>
 inline void Array<Type>::Push(const Type& item)
 {
+	if (mSize == mCapacity) { Resize(mCapacity * 2); }
 	moptrData[mSize] = item;
 	++mSize;
 }
@@ -54,6 +58,36 @@ inline Type Array<Type>::Pop()
 	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
 
 	Type item = moptrData[mSize];
+	--mSize;
+	return item;
+}
+
+template<typename Type>
+inline void Array<Type>::Insert(const Type& item, size_t place)
+{
+	if (place > mSize) { throw std::overflow_error("Index to high"); }
+	if (mSize == mCapacity) { Resize(mCapacity * 2); }
+
+	for (size_t index = mSize; index > place; ++index)
+	{
+		moptrData[index] = moptrData[index - 1];
+	}
+	moptrData[place] = item;
+	++mSize;
+}
+
+template<typename Type>
+inline Type Array<Type>::Remove(size_t place)
+{
+	if (place > mSize) { throw std::overflow_error("Index to high"); }
+	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
+
+	Type item = moptrData[place];
+
+	for (size_t index = place; place < mSize - 1; ++index)
+	{
+		moptrData[index] = moptrData[index + 1];
+	}
 	--mSize;
 	return item;
 }
